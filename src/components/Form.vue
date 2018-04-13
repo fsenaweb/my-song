@@ -18,6 +18,7 @@
             </v-form>
             <v-card-actions>
               <v-spacer></v-spacer>
+              <v-btn depressed small color="info" @click.prevent="reloadData">Limpar</v-btn>
               <v-btn depressed small color="primary" @click.prevent="findMusic">Pesquisar</v-btn>
             </v-card-actions>
           </v-card>
@@ -70,7 +71,8 @@
               this.result = response.data
               if (this.result.type === 'exact') {
                 this.music.name = this.result.mus[0].name
-                this.music.text = this.result.mus[0].text.replace(/(?:\r\n|\r|\n)/g, '<br />')
+                this.music.text = this.result.mus[0].text
+                  .replace(/(?:\r\n|\r|\n)/g, '<br />')
                 console.log(this.music)
               }
               if (this.result.type === 'song_notfound' || this.result.type === 'notfound') {
@@ -92,6 +94,9 @@
           this.titleDialog = 'Erro'
           this.msgDialog = 'Os campos Artista e Música são obrigatórios.'
         }
+      },
+      reloadData () {
+        console.log('recarregando...')
       }
     }
   }
