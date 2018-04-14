@@ -8,6 +8,7 @@
               <v-text-field
                 label="Artista"
                 v-model="txtartist"
+                ref="artista"
                 required
               ></v-text-field>
               <v-text-field
@@ -29,16 +30,7 @@
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
-          <v-dialog v-model="dialog" max-width="290">
-            <v-card>
-              <v-card-title class="headline">{{ titleDialog }}</v-card-title>
-              <v-card-text>{{ msgDialog }}</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click.native="dialog = false">Fechar</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <dialogo v-if="dialog" :dialog="dialog" :title="titleDialog" :msg="msgDialog" @dialogo="changeDialog"></dialogo>
         </v-flex>
       </v-layout>
     </v-container>
@@ -47,6 +39,8 @@
 
 <script>
   import axios from 'axios'
+  import Dialogo from './Dialog'
+
   export default {
     name: 'Form',
     data () {
@@ -63,7 +57,13 @@
         }
       }
     },
+    components: {
+      Dialogo
+    },
     methods: {
+      changeDialog () {
+        this.dialog = false
+      },
       findMusic () {
         if (this.txtartist && this.txtmusic) {
           axios.get('https://api.vagalume.com.br/search.php?art=' + this.txtartist + '&mus=' + this.txtmusic + '&apikey={bcd3ff0cd991b534b5c2038f183788c2}')
@@ -73,7 +73,6 @@
                 this.music.name = this.result.mus[0].name
                 this.music.text = this.result.mus[0].text
                   .replace(/(?:\r\n|\r|\n)/g, '<br />')
-                console.log(this.music)
               }
               if (this.result.type === 'song_notfound' || this.result.type === 'notfound') {
                 this.dialog = true
@@ -96,7 +95,9 @@
         }
       },
       reloadData () {
-        console.log('recarregando...')
+        this.txtmusic = ''
+        this.txtartist = ''
+        this.$refs.artista.focus()
       }
     }
   }
